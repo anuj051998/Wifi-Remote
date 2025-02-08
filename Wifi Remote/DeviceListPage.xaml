@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MyApp.DeviceListPage"
+             Title="Connected Devices">
+
+    <VerticalStackLayout Padding="20">
+        <!-- Loader -->
+        <ActivityIndicator IsRunning="{Binding IsScanning}" IsVisible="{Binding IsScanning}" Color="Blue" HorizontalOptions="Center"/>
+        
+        <!-- Title -->
+        <Label Text="Connected Devices" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center"/>
+
+        <!-- List of Devices -->
+        <ListView ItemsSource="{Binding Devices}" SelectionMode="Single" x:Name="DeviceListView">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Frame Padding="5" Margin="5" BackgroundColor="LightGray">
+                            <Label Text="{Binding}" FontSize="16"/>
+                        </Frame>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- Close Button -->
+        <Button Text="Close" Clicked="OnCloseClicked" />
+    </VerticalStackLayout>
+</ContentPage>

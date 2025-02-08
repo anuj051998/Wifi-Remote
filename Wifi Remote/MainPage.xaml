@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             BackgroundColor="White"
+             x:Class="Wifi_Remote.MainPage">
+    
+    <Grid BackgroundColor="White">
+        <Grid.RowDefinitions>
+            <RowDefinition  />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        
+        <BoxView BackgroundColor="white"/>  
+        <Button 
+            ImageSource="up.png"
+            BackgroundColor="white"
+            Grid.Row="0"
+            Grid.Column="0"
+                x:Name="forwardButton"
+                Pressed="forwardButton_Pressed"
+            Released="stopBtn_Clicked"
+                HorizontalOptions="Center"
+                VerticalOptions="Center" />
+        <BoxView BackgroundColor="White" Grid.Row="1" Grid.Column="0" />
+        <Button 
+            Grid.Row="1"
+                Grid.Column="0"
+                 ImageSource="down.png"
+                 x:Name="backwardButton"
+            BackgroundColor="white"
+                 Pressed="backwardButton_Pressed"
+            Released="stopBtn_Clicked"
+                 HorizontalOptions="Center"
+                 VerticalOptions="Center" />
+        <BoxView BackgroundColor="White" Grid.Row="0" Grid.Column="2" />
+        <Button
+            x:Name="leftButton"
+            ImageSource="left.png"
+            Pressed="leftButton_Pressed"
+            Released="stopBtn_Clicked"
+            Grid.Row="0"
+            BackgroundColor="white"
+            Grid.Column="2"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            />
+        <BoxView BackgroundColor="White" Grid.Row="1" Grid.Column="2" />
+        <Button
+    x:Name="rightButton"
+            Pressed="rightButton_Pressed"
+            Released="stopBtn_Clicked"
+    ImageSource="right.png"
+            BackgroundColor="white"
+    Grid.Row="1"
+    Grid.Column="2"
+    HorizontalOptions="Center"
+    VerticalOptions="Center"
+    />
+        <Grid Grid.Row="0" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            
+            <Label Text="Speed"
+       x:Name="SpeedIndicator"
+       Grid.Row="0"
+                   Padding="10"
+       Grid.Column="0"
+       
+       >
+            </Label>
+            <Button
+    Text="Set Ip"
+    BackgroundColor="White"
+    TextColor="Black"
+    BorderColor="black"
+    x:Name="setIpBtn"
+    Clicked="setIpBtn_Clicked"
+    Grid.Row="1"
+    Grid.Column="0"
+    />
+            <Button
+Text="Scan Ips"
+BackgroundColor="White"
+TextColor="Black"
+BorderColor="black"
+x:Name="scanIpBtn"
+Clicked="scanIpBtn_Clicked"
+Grid.Row="1"
+Grid.Column="1"
+/>
+        </Grid>
+        
+        
+        <Slider Minimum="0" Maximum="10"
+                x:DataType="x:Int16"
+                x:Name="speed"
+                ValueChanged="Slider_ValueChanged"
+                Grid.Column="1"
+                Grid.Row="1"
+                BackgroundColor="GhostWhite"
+                
+                ThumbColor="Coral"
+                ></Slider>
+        <Grid Grid.Row="2" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Button
+                x:Name="stopBtn"
+                BackgroundColor="White"
+                ImageSource="stop.png"
+                Grid.Row="2"
+                Grid.Column="0"
+                Clicked="stopBtn_Clicked"
+                >
+            </Button>
+
+            <Button
+                x:Name="lightBtn"
+                BackgroundColor="White"
+                ImageSource="light_off.png"
+                Grid.Row="2"
+                Grid.Column="1"
+                x:DataType="x:Boolean"
+                IsVisible="True"
+                Clicked="lightBtn_Clicked"
+            >
+
+            </Button>
+            <Button
+    x:Name="lightBtnOn"
+    BackgroundColor="White"
+    ImageSource="light_on.png"
+    Grid.Row="2"
+    Grid.Column="1"
+    x:DataType="x:Boolean"
+    IsVisible="False"
+    Clicked="lightBtn_Clicked"
+    ></Button>
+
+        </Grid>
+        
+    </Grid>
+
+
+</ContentPage>
