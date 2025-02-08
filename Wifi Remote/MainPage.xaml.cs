@@ -14,6 +14,7 @@ namespace Wifi_Remote
             WeakReferenceMessenger.Default.Register<DeviceSelectedMessage>(this, (recipient, message) =>
             {
                 DisplayAlert("Device Selected", $"You clicked on: {message.Value}", "OK");
+                this.ipAddress = message.Value;
             });
         }
 
@@ -25,16 +26,19 @@ namespace Wifi_Remote
 
         private async void backwardButton_Pressed(object sender, EventArgs e)
         {
+            ((Button)sender).BackgroundColor = Colors.DarkGray;
             await SendCommand(BACKWARD);
         }
 
         private async void rightButton_Pressed(object sender, EventArgs e)
         {
+            ((Button)sender).BackgroundColor = Colors.DarkGray;
             await SendCommand(RIGHT);
         }
 
         private async void leftButton_Pressed(object sender, EventArgs e)
         {
+            ((Button)sender).BackgroundColor = Colors.DarkGray;
             await SendCommand(LEFT);
         }
 
@@ -45,6 +49,7 @@ namespace Wifi_Remote
 
         private async void stopBtn_Clicked(object sender, EventArgs e)
         {
+            ((Button)sender).BackgroundColor = Colors.White;
             await SendCommand(STOP);
         }
 

@@ -1,11 +1,9 @@
-﻿using System.Collections.ObjectModel;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using System.Collections.ObjectModel;
 using Wifi_Remote.Helper;
 
 namespace Wifi_Remote
 {
-    using CommunityToolkit.Mvvm.Messaging;
 
     public partial class DeviceListPage : ContentPage
     {
@@ -43,6 +41,13 @@ namespace Wifi_Remote
                 }
             };
         }
+
+        private async void OnCloseClicked(object sender, EventArgs e)
+        {
+            // Close the modal when button is clicked
+            await Navigation.PopModalAsync();
+        }
+
     }
 
 }
