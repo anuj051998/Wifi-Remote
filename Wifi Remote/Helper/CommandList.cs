@@ -21,6 +21,10 @@
         public const string BACKWARD = "B";
         public const string LEFT = "L";
         public const string RIGHT = "R";
+        public const string FORWARD_LEFT = "G";
+        public const string FORWARD_RIGHT = "I";
+        public const string BACKWARD_LEFT = "H";
+        public const string BACKWARD_RIGHT = "J";
         public const string LIGHT_ON = "W";
         public const string LIGHT_OFF = "w";
         public const string STOP = "S";

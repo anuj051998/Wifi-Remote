@@ -60,6 +60,9 @@
 	  <None Remove="Resources\Images\icons8-light-100.png" />
 	  <None Remove="Resources\Images\icons8-power-100.png" />
 	  <None Remove="Resources\Images\icons8-stop-100.png" />
+	  <None Remove="Resources\Images\sos.png" />
+	  <None Remove="Resources\Images\speed.png" />
+	  <None Remove="Resources\Images\speedometer.png" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -6,31 +6,74 @@ namespace Wifi_Remote.Helper
     {
         public static async Task<List<string>> GetConnectedDevicesAsync()
         {
-            List<string> connectedDevices = new List<string>();
+            var devices = new List<string>();
+            string subnet = "192.168.1."; // Define the subnet of your local network
+            int timeout = 1000; // Timeout for ping requests (1 second)
 
-            string localIP = NetworkHelper.GetLocalIPAddress();
-            if (string.IsNullOrEmpty(localIP)) return connectedDevices;
-
-            string baseIP = localIP.Substring(0, localIP.LastIndexOf('.') + 1); // Example: "192.168.1."
-
-            List<Task> tasks = new List<Task>();
-            for (int i = 1; i < 255; i++) // Scan 192.168.1.1 to 192.168.1.254
+            // Scan the range of IP addresses from 1 to 254
+            for (int i = 1; i <= 254; i++)
             {
-                string ip = baseIP + i;
-                tasks.Add(Task.Run(async () =>
+                string ipAddress = subnet + i;
+                var ping = new Ping();
+
+                try
                 {
-                    if (await PingHost(ip))
+                    // Send a ping to the current IP address
+                    var reply = await ping.SendPingAsync(ipAddress, timeout);
+
+                    // If the reply is successful, add it to the devices list
+                    if (reply.Status == IPStatus.Success)
                     {
-                        lock (connectedDevices)
-                        {
-                            connectedDevices.Add(ip);
-                        }
+                        devices.Add(ipAddress);
                     }
-                }));
+                }
+                catch (PingException)
+                {
+                    // Ignore if the ping request fails (e.g., unreachable device)
+                }
             }
 
-            await Task.WhenAll(tasks);
-            return connectedDevices;
+            return devices;
+        }
+        public static async Task<List<string>> GetValue()
+        {
+            var ipList = new List<string>();
+            foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                if (ni.OperationalStatus == OperationalStatus.Up)
+                {
+                    var ipProperties = ni.GetIPProperties();
+                    var ipv4Address = ipProperties.UnicastAddresses
+                        .FirstOrDefault(ip => ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+
+                    if (ipv4Address != null)
+                    {
+                        ipList.Add(ipv4Address.Address.ToString());
+                    }
+                }
+            }
+
+            return ipList;
+        }
+
+        private static string GetLocalIpAddress()
+        {
+            foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                if (ni.OperationalStatus == OperationalStatus.Up)
+                {
+                    var ipProperties = ni.GetIPProperties();
+                    var ipv4Address = ipProperties.UnicastAddresses
+                        .FirstOrDefault(ip => ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+
+                    if (ipv4Address != null)
+                    {
+                        return ipv4Address.Address.ToString();
+                    }
+                }
+            }
+
+            return null;
         }
 
         private static async Task<bool> PingHost(string ipAddress)
