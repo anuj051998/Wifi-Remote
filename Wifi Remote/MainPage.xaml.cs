@@ -6,10 +6,9 @@ namespace Wifi_Remote
 {
     public partial class MainPage : ContentPage
     {
-        private string? ipAddress = "192.168.122.212";
         private readonly HttpClient _httpClient;
         private TaskCompletionSource<bool>? _alertTask;
-        private readonly IDictionary<string, bool> buttonTracker = new Dictionary<string, bool>()
+        private readonly Dictionary<string, bool> buttonTracker = new Dictionary<string, bool>()
         {
             { FORWARD, false },
             { BACKWARD, false },
@@ -17,29 +16,41 @@ namespace Wifi_Remote
             { RIGHT, false },
         };
 
+        private string? IpAddressValue;
+
         public MainPage()
         {
             InitializeComponent();
             WeakReferenceMessenger.Default.Register<DeviceSelectedMessage>(this, (recipient, message) =>
             {
                 DisplayAlert("Device Selected", $"You clicked on: {message.Value}", "OK");
-                this.ipAddress = message.Value;
+                IpAddressValue = message.Value;
             });
             _httpClient = new HttpClient();
+
+            Task.Run(async () =>
+            {
+                string? ip = await StorageHelper.GetAsync(Constants.StorageKeys.IpAddress);
+                if (!string.IsNullOrEmpty(ip))
+                {
+                    IpAddressValue = ip;
+                    SetIpBtn.Text = $"IP Address: {IpAddressValue}";
+                }
+            });
         }
 
-        private static void handleBtnClick(object sender)
+        private static void HandleBtnClick(object sender)
         {
             Button? button = sender as Button;
             if (button is not null)
             {
-                button.BackgroundColor = Colors.DarkGray;
+                button.BackgroundColor = Colors.Grey;
             }
         }
 
-        private async void forwardButton_Pressed(object sender, EventArgs e)
+        private async void ForwardButton_Pressed(object sender, EventArgs e)
         {
-            handleBtnClick(sender);
+            HandleBtnClick(sender);
             buttonTracker[FORWARD] = true;
             bool res = await DualButtonCheck();
             if (res)
@@ -48,9 +59,9 @@ namespace Wifi_Remote
             }
         }
 
-        private async void backwardButton_Pressed(object sender, EventArgs e)
+        private async void BackwardButton_Pressed(object sender, EventArgs e)
         {
-            handleBtnClick(sender);
+            HandleBtnClick(sender);
             buttonTracker[BACKWARD] = true;
             bool res = await DualButtonCheck();
             if (res)
@@ -59,9 +70,9 @@ namespace Wifi_Remote
             }
         }
 
-        private async void rightButton_Pressed(object sender, EventArgs e)
+        private async void RightButton_Pressed(object sender, EventArgs e)
         {
-            handleBtnClick(sender);
+            HandleBtnClick(sender);
             buttonTracker[RIGHT] = true;
             bool res = await DualButtonCheck();
             if (res)
@@ -70,9 +81,9 @@ namespace Wifi_Remote
             }
         }
 
-        private async void leftButton_Pressed(object sender, EventArgs e)
+        private async void LeftButton_Pressed(object sender, EventArgs e)
         {
-            handleBtnClick(sender);
+            HandleBtnClick(sender);
             buttonTracker[LEFT] = true;
             bool res = await DualButtonCheck();
             if (res)
@@ -83,28 +94,29 @@ namespace Wifi_Remote
 
         private async Task<bool> DualButtonCheck()
         {
+            bool result = false;
             if (buttonTracker[FORWARD] && buttonTracker[LEFT])
             {
                 await SendCommand(FORWARD_LEFT);
-                return false;
             }
             else if (buttonTracker[FORWARD] && buttonTracker[RIGHT])
             {
                 await SendCommand(FORWARD_RIGHT);
-                return false;
             }
             else if (buttonTracker[BACKWARD] && buttonTracker[LEFT])
             {
                 await SendCommand(BACKWARD_LEFT);
-                return false;
             }
             else if (buttonTracker[BACKWARD] && buttonTracker[RIGHT])
             {
                 await SendCommand(BACKWARD_RIGHT);
-                return false;
+            }
+            else
+            {
+                result = true;
             }
 
-            return true;
+            return result;
         }
 
         private async void Slider_ValueChanged(object sender, ValueChangedEventArgs e)
@@ -113,10 +125,10 @@ namespace Wifi_Remote
             SpeedIndicator.Text = $"{speedValue}";
             speed.Value = speedValue;
             string cmd = speedValue < 10 ? speedValue.ToString() : "q";
-            await SendCommand(cmd);
+            await Task.WhenAll(SendCommand(cmd), StorageHelper.SetAsync(Constants.StorageKeys.Speed, speedValue.ToString()));
         }
 
-        private async void stopBtn_Clicked(object sender, EventArgs e)
+        private async void StopBtn_Clicked(object sender, EventArgs e)
         {
             ((Button)sender).BackgroundColor = Colors.White;
             buttonTracker[FORWARD] = false;
@@ -126,32 +138,32 @@ namespace Wifi_Remote
             await SendCommand(STOP);
         }
 
-        private async void lightBtn_Clicked(object sender, EventArgs e)
+        private async void LightBtn_Clicked(object sender, EventArgs e)
         {
-            bool isLightOn = !lightBtn.IsVisible;
+            bool isLightOn = !LightBtn.IsVisible;
             if (isLightOn)
             {
-                lightBtn.IsVisible = true;
-                lightBtnOn.IsVisible = false;
+                LightBtn.IsVisible = true;
+                LightBtnOn.IsVisible = false;
                 await SendCommand(LIGHT_OFF);
             }
             else
             {
-                lightBtn.IsVisible = false;
-                lightBtnOn.IsVisible = true;
+                LightBtn.IsVisible = false;
+                LightBtnOn.IsVisible = true;
                 await SendCommand(LIGHT_ON);
             }
         }
 
         private async Task SendCommand(string command)
         {
-            if(string.IsNullOrEmpty(command) || string.IsNullOrEmpty(ipAddress))
+            if (string.IsNullOrEmpty(command) || string.IsNullOrEmpty(IpAddressValue))
             {
                 await DisplayAlert("Error", "Please set the IP address and select a device.", "OK");
             }
             try
             {
-                await _httpClient.GetAsync($"http://{ipAddress}/?State={command}&speed={SpeedValues.GetValueOrDefault(speed.Value.ToString()), 80}");
+                await _httpClient.GetAsync($"http://{IpAddressValue}/?State={command}&speed={SpeedValues.GetValueOrDefault(speed.Value.ToString()),80}");
             }
             catch (Exception ex)
             {
@@ -159,23 +171,32 @@ namespace Wifi_Remote
                     return;
 
                 _alertTask = new TaskCompletionSource<bool>();
-                //await DisplayAlert("Error", ex.InnerException?.Message ?? ex.Message, "Ok", flowDirection: FlowDirection.LeftToRight);
+#if DEBUG
+                await DisplayAlert("Error", ex.InnerException?.Message ?? ex.Message, "Ok", flowDirection: FlowDirection.LeftToRight);
+#endif
                 _alertTask.SetResult(true);
             }
         }
 
-        private async void setIpBtn_Clicked(object sender, EventArgs e)
+        private async void SetIpBtn_Clicked(object sender, EventArgs e)
         {
             try
             {
-                string userInput = await DisplayPromptAsync("Ip Address", "Enter ip address of Node MCU.", placeholder: "Enter ip address of Node Mcu ESP8266.", initialValue: this.ipAddress, keyboard: Keyboard.Text);
+                string? currentIpValue = this.IpAddressValue;
+                string userInput = await DisplayPromptAsync("Enter Ip Address", "Enter ip address of Node MCU.", initialValue: IpAddressValue, keyboard: Keyboard.Text);
 
                 if (!string.IsNullOrWhiteSpace(userInput))
                 {
-                    this.ipAddress = userInput;
+                    IpAddressValue = userInput;
+                    SetIpBtn.Text = $"IP Address: {IpAddressValue}";
                 }
-                
-                await DisplayAlert("Success", $"Ip Address is: {ipAddress}", "OK");
+
+                await StorageHelper.SetAsync(Constants.StorageKeys.IpAddress, userInput);
+
+                if (!string.Equals(currentIpValue, IpAddressValue, StringComparison.OrdinalIgnoreCase))
+                {
+                    await DisplayAlert("Success", $"Ip Address is: {IpAddressValue}", "OK");
+                }
             }
             catch (Exception ex)
             {
@@ -183,7 +204,7 @@ namespace Wifi_Remote
             }
         }
 
-        private async void scanIpBtn_Clicked(object sender, EventArgs e)
+        private async void ScanIpBtn_Clicked(object sender, EventArgs e)
         {
             try
             {
@@ -195,20 +216,28 @@ namespace Wifi_Remote
             }
         }
 
-        private void speed_Loaded(object sender, EventArgs e)
+        private async void Speed_Loaded(object sender, EventArgs e)
         {
-            speed.Value = 4;
+            string? savedSpeedValue = await StorageHelper.GetAsync(Constants.StorageKeys.Speed);
+            if (!string.IsNullOrEmpty(savedSpeedValue) && double.TryParse(savedSpeedValue, out double savedValue))
+            {
+                speed.Value = savedValue;
+            }
+            else
+            {
+                speed.Value = 4;
+            }
         }
 
-        private async void sosBtn_Clicked(object sender, EventArgs e)
+        private async void SosBtn_Clicked(object sender, EventArgs e)
         {
             await SendCommand(SOS);
         }
 
-        private void speed_DragStarted(object sender, EventArgs e)
+        private void Speed_DragStarted(object sender, EventArgs e)
         {
             Slider slider = (Slider)sender;
-            if (slider != null)
+            if (slider is not null)
             {
                 Color newColor = Color.FromRgba(200, 200, 255, 255);
 
@@ -234,6 +263,14 @@ namespace Wifi_Remote
                 // Apply color to slider
                 speed.ThumbColor = newColor;
                 speed.MinimumTrackColor = newColor;
+            }
+        }
+
+        private void SetIpBtn_Loaded(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(IpAddressValue))
+            {
+                SetIpBtn.Text = $"Ip Address: {IpAddressValue}";
             }
         }
     }

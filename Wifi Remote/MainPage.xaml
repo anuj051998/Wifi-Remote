@@ -20,9 +20,9 @@
             BackgroundColor="white"
             Grid.Row="0"
             Grid.Column="0"
-            x:Name="forwardButton"
-            Pressed="forwardButton_Pressed"
-            Released="stopBtn_Clicked"
+            x:Name="ForwardButton"
+            Pressed="ForwardButton_Pressed"
+            Released="StopBtn_Clicked"
             HorizontalOptions="Center"
             VerticalOptions="Center"
         />
@@ -30,18 +30,18 @@
             Grid.Row="1"
             Grid.Column="0"
             ImageSource="down.png"
-            x:Name="backwardButton"
+            x:Name="BackwardButton"
             BackgroundColor="white"
-            Pressed="backwardButton_Pressed"
-            Released="stopBtn_Clicked"
+            Pressed="BackwardButton_Pressed"
+            Released="StopBtn_Clicked"
             HorizontalOptions="Center"
             VerticalOptions="Center"
         />
         <Button
-            x:Name="leftButton"
+            x:Name="LeftButton"
             ImageSource="left.png"
-            Pressed="leftButton_Pressed"
-            Released="stopBtn_Clicked"
+            Pressed="LeftButton_Pressed"
+            Released="StopBtn_Clicked"
             Grid.Row="1"
             BackgroundColor="white"
             Grid.Column="2"
@@ -49,9 +49,9 @@
             VerticalOptions="Center"
         />
         <Button
-            x:Name="rightButton"
-            Pressed="rightButton_Pressed"
-            Released="stopBtn_Clicked"
+            x:Name="RightButton"
+            Pressed="RightButton_Pressed"
+            Released="StopBtn_Clicked"
             ImageSource="right.png"
             BackgroundColor="white"
             Grid.Row="0"
@@ -72,16 +72,17 @@
                 Text="Set Ip Address"
                 BackgroundColor="White"
                 TextColor="Black"
-                BorderColor="black"
                 BorderWidth="1"
-                x:Name="setIpBtn"
-                Clicked="setIpBtn_Clicked"
+                x:Name="SetIpBtn"
+                Clicked="SetIpBtn_Clicked"
                 Grid.Row="0"
                 Padding="10"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
                 Grid.Column="0"
+                Loaded="SetIpBtn_Loaded"
             />
+
             <Image
                 Source="speedometer.png"
                 Grid.Row="2"
@@ -99,18 +100,18 @@
                 
 />
         </Grid>
-                        <Slider Minimum="0" Maximum="10"
+        <Slider Minimum="0" Maximum="10"
                 x:DataType="x:Int16"
                 x:Name="speed"
                 FlowDirection="LeftToRight"
                 ValueChanged="Slider_ValueChanged"
-                                DragStarted="speed_DragStarted"
-                                DragCompleted="speed_DragStarted"
+                                DragStarted="Speed_DragStarted"
+                                DragCompleted="Speed_DragStarted"
                 Grid.Column="1"
                 MaximumTrackColor="Red"
                 MinimumTrackColor="Green"
                 Grid.Row="2"
-                Loaded="speed_Loaded"
+                Loaded="Speed_Loaded"
                 BackgroundColor="White" 
                 ThumbColor="Green"
                                 
@@ -126,44 +127,44 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            
+
             <Button
-                x:Name="stopBtn"
+                x:Name="StopBtn"
                 BackgroundColor="White"
                 ImageSource="stop.png"
                 Grid.Row="2"
                 Grid.Column="0"
-                Clicked="stopBtn_Clicked"
+                Clicked="StopBtn_Clicked"
             />
             <Button
-                x:Name="lightBtn"
+                x:Name="LightBtn"
                 BackgroundColor="White"
                 ImageSource="light_off.png"
                 Grid.Row="2"
                 Grid.Column="1"
                 x:DataType="x:Boolean"
                 IsVisible="True"
-                Clicked="lightBtn_Clicked"
+                Clicked="LightBtn_Clicked"
             />
             <Button
-                x:Name="lightBtnOn"
+                x:Name="LightBtnOn"
                 BackgroundColor="White"
                 ImageSource="light_on.png"
                 Grid.Row="2"
                 Grid.Column="1"
                 x:DataType="x:Boolean"
                 IsVisible="False"
-                Clicked="lightBtn_Clicked"
+                Clicked="LightBtn_Clicked"
             />
             <Button
-                x:Name="sosBtn"
+                x:Name="SosBtn"
                 BackgroundColor="White"
                 ImageSource="sos.png"
                 Grid.Row="2"
                 Grid.Column="2"
                 x:DataType="x:Boolean"
                 IsVisible="True"
-                Clicked="sosBtn_Clicked"
+                Clicked="SosBtn_Clicked"
             />
         </Grid>
     </Grid>
